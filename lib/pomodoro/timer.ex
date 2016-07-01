@@ -17,7 +17,7 @@ defmodule Pomodoro.Timer do
   end
 
   def handle_cast({:update}, state) do
-    IO.puts format_output(state)
+    IO.write [IO.ANSI.clear_line,"\r",  format_output(state)]
     {:noreply, state}
   end
 
