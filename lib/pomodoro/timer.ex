@@ -6,9 +6,7 @@ defmodule Pomodoro.Timer do
   end
 
   def init(a) do
-    IO.puts "->> INIT #{inspect self}"
     :timer.apply_interval(500, __MODULE__, :update, [self])
-
     {:ok, {Timex.Interval.new(from: Timex.DateTime.now, until: [minutes: 25]), :countdown}}
   end
 
