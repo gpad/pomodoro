@@ -4,7 +4,6 @@ Simple CLI application that make a countdown:
 
 ## TODO
 
-- Emit a sound at the end of count down
 - Distribute as a single script (escript)
 - Give the ability to change the countdown
 - Show a progress bar
