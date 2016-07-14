@@ -2,9 +2,10 @@
 
 Simple CLI application that make a countdown:
 
+To develop you can run: `mix escript.build && ./pomodoro`
+
 ## TODO
 
-- Distribute as a single script [escript](https://elixirschool.com/lessons/advanced/escripts/)
 - Give the ability to change the countdown
 - Show a progress bar
 
