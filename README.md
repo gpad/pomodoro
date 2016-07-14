@@ -4,7 +4,7 @@ Simple CLI application that make a countdown:
 
 ## TODO
 
-- Distribute as a single script (escript)
+- Distribute as a single script [escript](https://elixirschool.com/lessons/advanced/escripts/)
 - Give the ability to change the countdown
 - Show a progress bar
 
