@@ -6,6 +6,7 @@ To develop you can run: `mix escript.build && ./pomodoro`
 
 ## TODO
 
+- Can launch app from different location, we need to set priv data in something like `\home\<user-name>\.pomodoro\priv`
 - Give the ability to change the countdown
 - Show a progress bar
 
