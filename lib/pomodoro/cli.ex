@@ -1,38 +1,45 @@
 defmodule Pomodoro.CLI do
-  # require IEx
+  require Logger
+
   def main(args \\ []) do
-    # IO.puts "CLI --> STAR"
+    Logger.debug "Arguments: #{inspect args}"
+
     app_name = Mix.Project.config[:app]
     Application.ensure_started(app_name)
-    # Application.put_env(:tzdata, :data_dir, "./xxx")
-    # Application.put_env(:logger)
 
-    # Application.fetch_env(:tzdata, :data_dir)
-    # Application.get_env(app, key, default)
-    # Do stuff
-    # IEx.pry()
-    # IO.puts ">>>> eccomi"
-    # [:pomodoro, :logger, :timex, :tzdata]
-    # [:logger, :crypto, :asn1, :public_key, :ssl, :idna, :mimerl, :certifi, :ssl_verify_fun, :metrics, :hackney, :tzdata]
-    # [:pomodoro]
-    # # |> Enum.map(&Application.load/1)
-    # |> Enum.map(fn app -> {app, Application.ensure_started(app)} end)
-    # |> Enum.map(&IO.inspect/1)
+    options = parse_args(args)
 
-    # |> Enum.map(&Application.ensure_started/1)
+    do_timer(options)
+  end
 
+  # TODO: REFACTORING!!!
+  def parse_args(args) do
+    {options, [], []} = OptionParser.parse(args, switches: [time: :string, help: :boolean], aliases: [t: :time, h: :help])
+    if Keyword.has_key?(options, :time) do
+      [m, s] = Keyword.fetch!(options, :time)
+        |> String.split(":")
+        |> Enum.map(&String.to_integer/1)
+      if (Enum.all?([m, s], fn v -> v >= 0 && v < 60 end)) do
+        [minutes: m, seconds: s]
+      else
+        :help
+      end
+    else
+      :help
+    end
+  end
 
+  defp do_timer(:help) do
+    IO.puts "-t <amount>, --timer amount\n\tPass the amount of time for timer.\n\tExample: pomodoro -t 5:00"
+    System.halt(0)
+  end
 
-    # Application.load(:pomodoro)
-    # Application.start(:logger)
-    # Application.start(:timex)
-    # Application.start(:pomodoro)
-
-    # Application.ensure_all_started(:pomodoro)
-    Pomodoro.Timer.start_link
-    # IO.puts "In attesa di uscire"
+  defp do_timer(amount) do
+    {:ok, _} = Supervisor.start_child(Pomodoro.Supervisor, [[amount: amount, notify_pid: self]])
     receive do
-      {:exit,contents} -> IO.puts "Exit"
+      {:timer_elapsed, _} ->
+        IO.puts "Timer elapsed!"
+        System.halt(0)
     end
   end
 end
