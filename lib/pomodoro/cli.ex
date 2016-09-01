@@ -15,18 +15,24 @@ defmodule Pomodoro.CLI do
   # TODO: REFACTORING!!!
   def parse_args(args) do
     {options, [], []} = OptionParser.parse(args, switches: [time: :string, help: :boolean], aliases: [t: :time, h: :help])
+    ret = :help
+    if length(options) == 0 do
+      ret = [minutes: 25, seconds: 0]
+    end
     if Keyword.has_key?(options, :time) do
       [m, s] = Keyword.fetch!(options, :time)
         |> String.split(":")
         |> Enum.map(&String.to_integer/1)
       if (Enum.all?([m, s], fn v -> v >= 0 && v < 60 end)) do
-        [minutes: m, seconds: s]
+        ret = [minutes: m, seconds: s]
       else
-        :help
+        ret = :help
       end
-    else
-      :help
     end
+    if Keyword.has_key?(options, :help) do
+      ret = :help
+    end
+    ret
   end
 
   defp do_timer(:help) do

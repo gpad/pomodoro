@@ -21,7 +21,7 @@ use Mix.Config
 #     config :logger, level: :info
 #
 
-config :logger, level: if (Mix.env == :dev), do: :debug, else: :info
+config :logger, level: if (Mix.env != :prod), do: :debug, else: :info
 
 config :tzdata, data_dir: "./priv"
 

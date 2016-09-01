@@ -18,4 +18,8 @@ defmodule CLITest do
     assert parse_args(["--time", "75:00"]) == :help
     assert parse_args(["--time", "5:60"]) == :help
   end
+
+  test "without arguments should return 25 minutes" do
+    assert parse_args([]) == [minutes: 25, seconds: 0]
+  end
 end
