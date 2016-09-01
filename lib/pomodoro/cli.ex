@@ -12,7 +12,6 @@ defmodule Pomodoro.CLI do
     do_timer(options)
   end
 
-  # TODO: REFACTORING!!!
   defp parse_time(stime) do
     [m, s] = stime |> String.split(":") |> Enum.map(&String.to_integer/1)
     if (Enum.all?([m, s], fn v -> v >= 0 && v < 60 end)) do
@@ -22,11 +21,10 @@ defmodule Pomodoro.CLI do
     end
   end
 
-  # TODO: REFACTORING!!!
   def parse_args(args) do
     {options, [], []} = OptionParser.parse(args, switches: [time: :string, help: :boolean], aliases: [t: :time, h: :help])
     Enum.reduce(options, [minutes: 25, seconds: 0], fn
-      {:help, v}, _acc -> :help
+      {:help, _}, _acc -> :help
       {:time, v}, _acc -> parse_time(v)
       _, _acc -> :help
     end)
