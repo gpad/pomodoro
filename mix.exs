@@ -4,8 +4,8 @@ defmodule Pomodoro.Mixfile do
   def project do
     [app: :pomodoro,
      version: "0.1.0",
-     elixir: "~> 1.3",
-     escript: escript,
+     elixir: "~> 1.5",
+     escript: escript(),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps()]
@@ -19,7 +19,7 @@ defmodule Pomodoro.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :timex, :mix],
+    [applications: [:logger, :mix],
      mod: {Pomodoro, []}]
   end
 
@@ -34,7 +34,8 @@ defmodule Pomodoro.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:timex, "~> 2.2"}
+      # {:timex, "~> 2.2"}
+      {:timex, "~> 3.1"}
     ]
   end
 end

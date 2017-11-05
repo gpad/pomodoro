@@ -4,7 +4,7 @@ defmodule PomodoroTest do
   doctest Pomodoro
 
   test "send timer_elapsed message when timer is elapsed to passed pid" do
-    test_pid = self
+    test_pid = self()
     msg = {:ok, :crypto.strong_rand_bytes(12) |> Base.encode64}
     pid = spawn_link fn ->
       assert_receive({:timer_elapsed, _}, 20_000)

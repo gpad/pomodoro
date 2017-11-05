@@ -23,7 +23,6 @@ use Mix.Config
 
 config :logger, level: if (Mix.env != :prod), do: :debug, else: :info
 
-config :tzdata, data_dir: "./priv"
 
 
 # It is also possible to import configuration files, relative to this
