@@ -9,12 +9,12 @@ defmodule Pomodoro do
     # Define workers and child supervisors to be supervised
     children = [
       # Starts a worker by calling: Pomodoro.Worker.start_link(arg1, arg2, arg3)
-      worker(Pomodoro.Timer, [], restart: :temporary),
+      worker(Pomodoro.Timer, [], restart: :transient)
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Pomodoro.Supervisor]
+    opts = [strategy: :simple_one_for_one, name: Pomodoro.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end
