@@ -1,22 +1,24 @@
 defmodule Pomodoro.Timer do
   use GenServer
   require Logger
+  use Timex
 
   def start_link(args) do
-    Logger.debug "start_link amount: #{inspect args}"
-    # GenServer.start_link(__MODULE__, [amount: amount, notify_pid: self()])
     GenServer.start_link(__MODULE__, args)
   end
 
   def init([amount: amount, notify_pid: notify_pid]) do
-    Logger.debug "Start timer and I'm pid: #{inspect self()} with amount: #{inspect amount}"
+    Logger.debug "Start timer - I'm pid: #{inspect self()} with amount: #{inspect amount} notify #{inspect notify_pid}"
     {:ok, ref} = :timer.apply_interval(500, __MODULE__, :update, [self()])
+    from = Timex.now
+    to = Timex.shift(from, amount)
     state = %{
       timer_ref: ref,
-      interval: Timex.Interval.new(from: Timex.now, until: amount),
+      interval: {from, to},
       type: :countdown,
       notify_pid: notify_pid,
     }
+    update_console(state.interval, state.type)
     {:ok, state}
   end
 
@@ -47,30 +49,23 @@ defmodule Pomodoro.Timer do
     emit_sound(times - 1)
   end
 
-  defp format_output(interval, :countdown) do
-    Timex.diff(interval.until, Timex.now, :duration)
-      # |> Timex.DateTime.from_timestamp
-      |> Timex.format!("%M:%S", :strftime)
+  defp format_output({_from, to}, :countdown) do
+    d = Timex.diff(to, Timex.now, :duration)
+    m = Duration.to_minutes(d, truncate: true)
+    s = Duration.to_seconds(d, truncate: true) |> rem(60)
+    :io_lib.format("~2..0B:~2..0B", [m, s]) |> List.to_string
   end
 
-  defp format_output(interval, :elapsed) do
-    Timex.diff(Timex.now, interval.from, :duration)
-    # |> Timex.DateTime.from_timestamp
-    |> Timex.format!("%M:%S", :strftime)
+  defp format_output({from, _to}, :elapsed) do
+    d = Timex.diff(Timex.now, from, :duration)
+    m = Duration.to_minutes(d, truncate: true)
+    s = Duration.to_seconds(d, truncate: true) |> rem(60)
+    :io_lib.format("~2..0B:~2..0B", [m, s]) |> List.to_string
   end
 
-  defp elapsed?(interval) do
-    Timex.compare(Timex.now, interval.until) >= 0
+  defp elapsed?({_from, to}) do
+    Timex.compare(Timex.now, to) >= 0
   end
-
-  # defp close_me do
-  #   pid = self()
-  #   Logger.debug "Try to stop #{inspect pid}"
-  #   spawn(fn ->
-  #     r = GenServer.stop(pid)
-  #     Application.stop(:pomodoro)
-  #   end)
-  # end
 
   defp notify_elapsed(state) do
     Logger.debug("Send message to: #{inspect state.notify_pid}")

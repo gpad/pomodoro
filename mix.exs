@@ -19,9 +19,12 @@ defmodule Pomodoro.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :mix],
+    [applications: get_applications(Mix.env),
      mod: {Pomodoro, []}]
   end
+
+  defp get_applications(:test), do: [:logger, :mix, :timex]
+  defp get_applications(_), do: [:logger, :mix]
 
   # Dependencies can be Hex packages:
   #
@@ -34,7 +37,6 @@ defmodule Pomodoro.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      # {:timex, "~> 2.2"}
       {:timex, "~> 3.1"}
     ]
   end
